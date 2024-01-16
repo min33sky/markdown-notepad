@@ -11,6 +11,14 @@ function createWindow(): void {
     show: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
+    center: true,
+    title: 'Markdown Notes App',
+    //? 아래 코드는 Mac에서만 작동함
+    // frame: false,
+    // vibrancy: 'under-window',
+    // visualEffectState: 'active',
+    // titleBarStyle: 'hidden',
+    // trafficLightPosition: { x: 55, y: 10 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: true,
