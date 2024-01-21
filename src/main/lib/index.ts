@@ -1,12 +1,12 @@
 import { homedir } from 'os';
 import { appDirectoryName, fileEncoding, welcomeNoteFilename } from '@shared/constants';
-import { ensureDir, readFile, readdir, stat } from 'fs-extra';
+import { ensureDir, readFile, readdir, stat, writeFile } from 'fs-extra';
 import { NoteInfo } from '@shared/models';
-import { GetNotes, ReadNote } from '@shared/types';
+import { GetNotes, ReadNote, WriteNote } from '@shared/types';
 
 export const getRootDir = () => {
-  console.log('### HomeDir() : ', homedir());
-  console.log('### pwd() : ', process.cwd());
+  // console.log('### HomeDir() : ', homedir());
+  // console.log('### pwd() : ', process.cwd());
 
   return `${process.cwd()}/${appDirectoryName}`;
 };
@@ -42,3 +42,74 @@ export const readNote: ReadNote = async (filename) => {
     encoding: fileEncoding
   });
 };
+
+export const writeNote: WriteNote = async (filename, content) => {
+  const rootDir = getRootDir();
+
+  console.log('rootDir : ', rootDir);
+  console.log('filename : ', filename);
+  console.log('content : ', content);
+
+  console.info(`Writing note ${filename}`);
+  return writeFile(`${rootDir}/${filename}.md`, content, { encoding: fileEncoding });
+};
+
+// export const createNote: CreateNote = async () => {
+//   const rootDir = getRootDir();
+
+//   await ensureDir(rootDir);
+
+//   const { filePath, canceled } = await dialog.showSaveDialog({
+//     title: 'New note',
+//     defaultPath: `${rootDir}/Untitled.md`,
+//     buttonLabel: 'Create',
+//     properties: ['showOverwriteConfirmation'],
+//     showsTagField: false,
+//     filters: [{ name: 'Markdown', extensions: ['md'] }]
+//   });
+
+//   if (canceled || !filePath) {
+//     console.info('Note creation canceled');
+//     return false;
+//   }
+
+//   const { name: filename, dir: parentDir } = path.parse(filePath);
+
+//   if (parentDir !== rootDir) {
+//     await dialog.showMessageBox({
+//       type: 'error',
+//       title: 'Creation failed',
+//       message: `All notes must be saved under ${rootDir}.
+//       Avoid using other directories!`
+//     });
+
+//     return false;
+//   }
+
+//   console.info(`Creating note: ${filePath}`);
+//   await writeFile(filePath, '');
+
+//   return filename;
+// };
+
+// export const deleteNote: DeleteNote = async (filename) => {
+//   const rootDir = getRootDir();
+
+//   const { response } = await dialog.showMessageBox({
+//     type: 'warning',
+//     title: 'Delete note',
+//     message: `Are you sure you want to delete ${filename}?`,
+//     buttons: ['Delete', 'Cancel'], // 0 is Delete, 1 is Cancel
+//     defaultId: 1,
+//     cancelId: 1
+//   });
+
+//   if (response === 1) {
+//     console.info('Note deletion canceled');
+//     return false;
+//   }
+
+//   console.info(`Deleting note: ${filename}`);
+//   await remove(`${rootDir}/${filename}.md`);
+//   return true;
+// };
