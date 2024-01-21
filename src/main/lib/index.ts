@@ -1,4 +1,4 @@
-import { homedir } from 'os';
+// import { homedir } from 'os';
 import { appDirectoryName, fileEncoding, welcomeNoteFilename } from '@shared/constants';
 import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra';
 import { NoteInfo } from '@shared/models';
