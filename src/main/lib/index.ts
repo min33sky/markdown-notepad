@@ -1,10 +1,12 @@
 import { homedir } from 'os';
 import { appDirectoryName, fileEncoding, welcomeNoteFilename } from '@shared/constants';
-import { ensureDir, readFile, readdir, stat, writeFile } from 'fs-extra';
+import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra';
 import { NoteInfo } from '@shared/models';
-import { CreateNote, GetNotes, ReadNote, WriteNote } from '@shared/types';
+import { CreateNote, DeleteNote, GetNotes, ReadNote, WriteNote } from '@shared/types';
 import { dialog } from 'electron';
 import path from 'path';
+import { isEmpty } from 'lodash';
+import welcomeNoteFile from '../../../resources/welcome-note.md?asset';
 
 export const getRootDir = () => {
   // console.log('### HomeDir() : ', homedir());
@@ -24,6 +26,19 @@ export const getNotes: GetNotes = async () => {
   });
 
   const notes = notesFileNames.filter((fileName) => fileName.endsWith('.md'));
+
+  console.log('Notes: ', notes);
+
+  if (isEmpty(notes)) {
+    console.info('No notes found, creating a welcome note');
+
+    const content = await readFile(welcomeNoteFile, { encoding: fileEncoding });
+
+    // create the welcome note
+    await writeFile(`${rootDir}/${welcomeNoteFilename}`, content, { encoding: fileEncoding });
+
+    notes.push(welcomeNoteFilename);
+  }
 
   return Promise.all(notes.map(getNoteInfoFromFilename));
 };
@@ -91,24 +106,24 @@ export const createNote: CreateNote = async () => {
   return filename;
 };
 
-// export const deleteNote: DeleteNote = async (filename) => {
-//   const rootDir = getRootDir();
+export const deleteNote: DeleteNote = async (filename) => {
+  const rootDir = getRootDir();
 
-//   const { response } = await dialog.showMessageBox({
-//     type: 'warning',
-//     title: 'Delete note',
-//     message: `Are you sure you want to delete ${filename}?`,
-//     buttons: ['Delete', 'Cancel'], // 0 is Delete, 1 is Cancel
-//     defaultId: 1,
-//     cancelId: 1
-//   });
+  const { response } = await dialog.showMessageBox({
+    type: 'warning',
+    title: 'Delete note',
+    message: `Are you sure you want to delete ${filename}?`,
+    buttons: ['Delete', 'Cancel'], // 0 is Delete, 1 is Cancel
+    defaultId: 1,
+    cancelId: 1
+  });
 
-//   if (response === 1) {
-//     console.info('Note deletion canceled');
-//     return false;
-//   }
+  if (response === 1) {
+    console.info('Note deletion canceled');
+    return false;
+  }
 
-//   console.info(`Deleting note: ${filename}`);
-//   await remove(`${rootDir}/${filename}.md`);
-//   return true;
-// };
+  console.info(`Deleting note: ${filename}`);
+  await remove(`${rootDir}/${filename}.md`);
+  return true;
+};
