@@ -2,7 +2,4 @@
 
 aaaaaa
 
-asdfasdfasdfasdfasasdf
-
-* 1
-*
+asdfasdfasdfasdf
