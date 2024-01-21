@@ -1,5 +1,7 @@
 # markdown-notes-app
 
+> 마크다운 메모장 입니다.
+
 ## Project Setup
 
 ### Build
@@ -30,3 +32,7 @@ $ pnpm build:linux
   />
 </head>
 ```
+
+### References
+
+- [electron-vite](https://electron-vite.org/)
